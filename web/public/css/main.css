@@ -1,0 +1,10 @@
+.container {
+    margin-top: 10px;
+    background-color: #eee;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+caption {
+    text-align: left;
+}

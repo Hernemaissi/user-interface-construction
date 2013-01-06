@@ -1,0 +1,111 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+#{set 'moreScripts'}
+<script src="@{'/public/js/index.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+#{/set}
+
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="inputLoanAmount">Loan amount</label>
+        <div class="controls">
+            <div class="input-prepend input-append">
+                <span class="add-on">€</span>
+                <input class="input-large" type="number" style="text-align: right;" id="inputLoanAmount" placeholder="Loan amount in Euros" required>
+                <span class="add-on">.00</span>
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputBank">Bank</label>
+        <div class="controls">
+            <select id="inputBank" class="input-xlarge">
+                <option value="0">Nordea</option>
+                <option value="1">Handelsbanken</option>
+            </select>
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="inputRegularIncome" data-toggle="collapse" data-target="#advancedInputs"><a>Advanced settings</a></label>
+    </div>
+    <div id="advancedInputs" class="collapse out">
+        <div class="control-group">
+            <label class="control-label" for="inputRegularIncome">Regular income</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <span class="add-on">€</span>
+                    <input type="number" style="text-align: right;" id="inputRegularIncome" placeholder="Your regular income">
+                    <span class="add-on">.00</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputCreditCard">Credit card</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <span class="add-on">€</span>
+                    <input type="number" style="text-align: right;" id="inputCreditCard" placeholder="Your credit card's credit limit">
+                    <span class="add-on">.00</span>
+                </div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputRegularBills">Regular bills</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <span class="add-on">€</span>
+                    <input type="number" style="text-align: right;" id="inputRegularBills" placeholder="Your regular bills">
+                    <span class="add-on">.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
+            <button type="reset" class="btn">Reset</button>
+        </div>
+    </div>
+</form>
+
+<div>
+    <h3>Loans for amount X</h3>
+    <table class="table table-bordered table-hover table-condensed">
+        <caption>If we need some caption, it could be here...</caption>
+        <thead>
+        <tr>
+            <th>Duration</th>
+            <th>Interest rate</th>
+            <th>Opening fee</th>
+            <th>Transaction fee</th>
+            <th>Monthly payment</th>
+            <th>Total amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>6 months</td>
+            <td>X %</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>XXX €</td>
+        </tr>
+        <tr>
+            <td>12 months</td>
+            <td>X %</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>XXX €</td>
+        </tr>
+        <tr>
+            <td>18 months</td>
+            <td>X %</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>X €</td>
+            <td>XXX €</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
