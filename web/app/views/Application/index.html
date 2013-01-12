@@ -2,74 +2,81 @@
 #{set title:'Home' /}
 #{set 'moreScripts'}
 <script src="@{'/public/js/index.js'}" type="text/javascript" charset="${_response_encoding}"></script>
+<script type="text/javascript">
+    window.manageme = {
+        postFormUrl : #{jsAction @Application.postForm() /}
+    }
+</script>
 #{/set}
 
-<form class="form-horizontal">
+<form class="form-horizontal" id="loanForm">
+    <p class="lead">
+        Fill details of your loan<br/>
+        <small>To fill more detailed information, click Advanced settings</small>
+    </p>
+    <div class="alert alert-error" id="formErrors">Form contains errors.</div>
     <div class="control-group">
         <label class="control-label" for="inputLoanAmount">Loan amount</label>
         <div class="controls">
             <div class="input-prepend input-append">
-                <span class="add-on">€</span>
-                <input class="input-large" type="number" style="text-align: right;" id="inputLoanAmount" placeholder="Loan amount in Euros" required>
-                <span class="add-on">.00</span>
+                <input class="input-large" type="number" style="text-align: right;" name="inputLoanAmount" id="inputLoanAmount" placeholder="Loan amount" required>
+                <span class="add-on">.00 €</span>
             </div>
+            <span class="help-inline">Required</span>
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="inputBank">Bank</label>
         <div class="controls">
-            <select id="inputBank" class="input-xlarge">
-                <option value="0">Nordea</option>
-                <option value="1">Handelsbanken</option>
-            </select>
+            #{select 'inputBank', items:bankList, valueProperty:'id', labelProperty:'name', class:'input-xlarge', id:'inputBank' /}
+            <span class="help-inline"></span>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="inputRegularIncome" data-toggle="collapse" data-target="#advancedInputs"><a>Advanced settings</a></label>
+        <label class="control-label" for="inputRegularIncome" data-toggle="collapse" data-target="#advancedInputs"><a class="btn btn-small btn-primary">Advanced settings</a></label>
     </div>
     <div id="advancedInputs" class="collapse out">
         <div class="control-group">
             <label class="control-label" for="inputRegularIncome">Regular income</label>
             <div class="controls">
                 <div class="input-prepend input-append">
-                    <span class="add-on">€</span>
-                    <input type="number" style="text-align: right;" id="inputRegularIncome" placeholder="Your regular income">
-                    <span class="add-on">.00</span>
+                    <input type="number" style="text-align: right;" name="inputRegularIncome" id="inputRegularIncome" placeholder="Your regular income /month">
+                    <span class="add-on">.00 €</span>
                 </div>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label" for="inputCreditCard">Credit card</label>
-            <div class="controls">
-                <div class="input-prepend input-append">
-                    <span class="add-on">€</span>
-                    <input type="number" style="text-align: right;" id="inputCreditCard" placeholder="Your credit card's credit limit">
-                    <span class="add-on">.00</span>
-                </div>
+                <span class="help-inline"></span>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="inputRegularBills">Regular bills</label>
             <div class="controls">
                 <div class="input-prepend input-append">
-                    <span class="add-on">€</span>
-                    <input type="number" style="text-align: right;" id="inputRegularBills" placeholder="Your regular bills">
-                    <span class="add-on">.00</span>
+                    <input type="number" style="text-align: right;" name="inputRegularBills" id="inputRegularBills" placeholder="Your regular bills /month">
+                    <span class="add-on">.00 €</span>
                 </div>
+                <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputCreditCard">Credit card</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <input type="number" style="text-align: right;" name="inputCreditCard" id="inputCreditCard" placeholder="Your credit card's credit limit">
+                    <span class="add-on">.00 €</span>
+                </div>
+                <span class="help-inline"></span>
             </div>
         </div>
     </div>
-    <div class="control-group">
-        <div class="controls">
-            <button type="submit" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
-            <button type="reset" class="btn">Reset</button>
-        </div>
+    <div class="form-actions">
+        #{authenticityToken /}
+        <button type="submit" class="btn btn-success"><i class="icon-search icon-white"></i> Search</button>
+        <button type="reset" class="btn">Reset</button>
     </div>
 </form>
 
-<div>
-    <h3>Loans for amount X</h3>
-    <table class="table table-bordered table-hover table-condensed">
+<div id="results">
+    <h3>Loans for amount <span id="resultAmount"></span> from <span id="resultBank"></span></h3>
+    <table id="loanTable" class="table table-bordered table-hover table-condensed">
         <caption>If we need some caption, it could be here...</caption>
         <thead>
         <tr>
@@ -105,6 +112,31 @@
             <td>X €</td>
             <td>X €</td>
             <td>XXX €</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Bonus cards</h3>
+    <table id="bonusCards" class="table table-bordered table-hover table-condensed">
+        <caption>Following table shows how much bonuses you get when buying with the loan amount and using a bonus card</caption>
+        <thead>
+        <tr>
+            <th>Bonus card</th>
+            <th>Bonus amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Bonus card 1</td>
+            <td>X €</td>
+        </tr>
+        <tr>
+            <td>Bonus card 2</td>
+            <td>X €</td>
+        </tr>
+        <tr>
+            <td>Bonus card 3</td>
+            <td>X €</td>
         </tr>
         </tbody>
     </table>
