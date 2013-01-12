@@ -5,6 +5,10 @@
     border-radius: 5px;
 }
 
+#results {
+    margin-bottom: 20px;
+}
+
 caption {
     text-align: left;
 }

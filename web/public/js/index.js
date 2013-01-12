@@ -10,6 +10,9 @@ $(document).ready(function() {
             $(loanAmountInput).parents(".controls").find(".help-inline").show();
             return false;
         }
+        $.each($("input[value!='']"), function(i, v) {
+            $(v).parents("#advancedInputs").addClass("in").css("height", "auto");
+        })
         $.ajax({
             url: window.manageme.postFormUrl(),
             type: 'POST',
@@ -21,20 +24,37 @@ $(document).ready(function() {
                 $("#" + v.key).parents("#advancedInputs").addClass("in").css("height", "auto");
             })
         }).success(function(results) {
-            $("#resultAmount").text($("#inputLoanAmount").val() + " €");
-            $("#resultBank").text($("#inputBank option:selected").text());
             var loanTableTableTBody = $("table#loanTable").children("tbody");
             $(loanTableTableTBody).empty();
-            $.each(results.loanMap, function(i, v) {
-                console.log("loanMap " + i + ": " + v);
-                $("<tr><td>" + i + " months</td>"
-                    + "<td>" + v.INTEREST_RATE + " %</td>"
-                    + "<td>" + v.OPENING_FEE.formatMoney(2, '.', ' ') + " €</td>"
-                    + "<td>" + v.TRANSACTION_FEE.formatMoney(2, '.', ' ') + " €</td>"
-                    + "<td>" + v.MONTHLY_PAYMENT.formatMoney(2, '.', ' ') + " €</td>"
-                    + "<td>" + v.TOTAL_AMOUNT.formatMoney(2, '.', ' ') + " €</td>"
-                    + "</tr>").appendTo(loanTableTableTBody);
-            });
+
+            if (results.suggested === "bankAccount") {
+                $("#suggested .lead").text("Use money on your bank account.");
+            } else if (results.suggested === "both") {
+                $("#suggested .lead").text("Money on your bank account is not enough, you need to take a loan.");
+            } else {
+                //$("#suggested .lead").text("Loan.");
+                $("#suggested .lead").text("");
+            }
+
+            if (typeof(results.loanMap) != "undefined") {
+                var loanAmount = results.loanAmount;
+                $("#resultAmount").text(new Number(loanAmount).formatMoney(2, '.', ' ') + " €");
+                $("#resultBank").text($("#inputBank option:selected").text());
+
+                $.each(results.loanMap, function(i, v) {
+                    console.log("loanMap " + i + ": " + v);
+                    $("<tr><td>" + i + " months</td>"
+                        + "<td>" + v.INTEREST_RATE + " %</td>"
+                        + "<td>" + v.OPENING_FEE.formatMoney(2, '.', ' ') + " €</td>"
+                        + "<td>" + v.TRANSACTION_FEE.formatMoney(2, '.', ' ') + " €</td>"
+                        + "<td>" + v.MONTHLY_PAYMENT.formatMoney(2, '.', ' ') + " €</td>"
+                        + "<td>" + v.TOTAL_AMOUNT.formatMoney(2, '.', ' ') + " €</td>"
+                        + "</tr>").appendTo(loanTableTableTBody);
+                });
+                $("#loanResults").show();
+            } else {
+                $("#loanResults").hide();
+            }
             var bonusCardTableTBody = $("table#bonusCards").children("tbody");
             $(bonusCardTableTBody).empty();
             $.each(results.bonusCardAmounts, function(i, v) {

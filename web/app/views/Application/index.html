@@ -37,6 +37,26 @@
     </div>
     <div id="advancedInputs" class="collapse out">
         <div class="control-group">
+            <label class="control-label" for="inputBankAccount">Bank account balance</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <input type="number" style="text-align: right;" name="inputBankAccount" id="inputBankAccount" placeholder="Your bank account's balance">
+                    <span class="add-on">.00 €</span>
+                </div>
+                <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="inputCreditCard">Credit card balance</label>
+            <div class="controls">
+                <div class="input-prepend input-append">
+                    <input type="number" style="text-align: right;" name="inputCreditCard" id="inputCreditCard" placeholder="Your credit card's balance">
+                    <span class="add-on">.00 €</span>
+                </div>
+                <span class="help-inline"></span>
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="inputRegularIncome">Regular income</label>
             <div class="controls">
                 <div class="input-prepend input-append">
@@ -56,16 +76,6 @@
                 <span class="help-inline"></span>
             </div>
         </div>
-        <div class="control-group">
-            <label class="control-label" for="inputCreditCard">Credit card</label>
-            <div class="controls">
-                <div class="input-prepend input-append">
-                    <input type="number" style="text-align: right;" name="inputCreditCard" id="inputCreditCard" placeholder="Your credit card's credit limit">
-                    <span class="add-on">.00 €</span>
-                </div>
-                <span class="help-inline"></span>
-            </div>
-        </div>
     </div>
     <div class="form-actions">
         #{authenticityToken /}
@@ -75,6 +85,10 @@
 </form>
 
 <div id="results">
+    <div id="suggested">
+        <p class="lead"></p>
+    </div>
+    <div id="loanResults">
     <h3>Loans for amount <span id="resultAmount"></span> from <span id="resultBank"></span></h3>
     <table id="loanTable" class="table table-bordered table-hover table-condensed">
         <caption>If we need some caption, it could be here...</caption>
@@ -115,6 +129,7 @@
         </tr>
         </tbody>
     </table>
+    </div>
 
     <h3>Bonus cards</h3>
     <table id="bonusCards" class="table table-bordered table-hover table-condensed">

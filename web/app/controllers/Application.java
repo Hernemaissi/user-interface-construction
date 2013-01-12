@@ -74,39 +74,55 @@ public class Application extends Controller {
     }
 
     public static void postForm(@Required long inputLoanAmount, int inputBank, long inputRegularIncome,
-            long inputRegularBills, long inputCreditCard) {
+            long inputRegularBills, long inputCreditCard, long inputBankAccount) {
         if(validation.hasErrors()) {
             response.status = 400;
             renderJSON(validation.errors().toArray());
         }
+        final long originalLoanAmount = inputLoanAmount;
+        Map<String, Object> objectsToRender = new HashMap<String, Object>();
+        objectsToRender.put("originalLoanAmount", originalLoanAmount);
 
         Logger.info(inputLoanAmount + " " + inputBank + " " + inputRegularIncome + " " + inputRegularBills
                 + " " + inputCreditCard);
 
-        final Bank bank = banks.get(inputBank);
-        Logger.info("Bank: " + bank.name);
-        final Map<Integer, Map<String, Double>> valueMap = bank.valueMap;
-        final Map<Integer, Map<String, Double>> loanMap = new HashMap<Integer, Map<String, Double>>();
-        for (Integer key : valueMap.keySet()) {
-            final Map<String, Double> loanMonthMap = new HashMap<String, Double>(valueMap.get(key));
-            loanMap.put(key, loanMonthMap);
-            final double rate = (double)loanMonthMap.get(Bank.INTEREST_RATE) / 100;
-            final double monthlyPayment =
-                    (inputLoanAmount / ((1 - Math.pow(1 + (rate / 12.0 ), -key)) / (rate /12)))
-                            + loanMonthMap.get(Bank.TRANSACTION_FEE);
-            final double totalPayment = monthlyPayment * key + loanMonthMap.get(Bank.OPENING_FEE);
-            loanMonthMap.put(Bank.MONTHLY_PAYMENT, monthlyPayment);
-            loanMonthMap.put(Bank.TOTAL_AMOUNT, totalPayment);
+        if (inputBankAccount >= inputLoanAmount) {
+            inputBankAccount -= inputLoanAmount;
+            inputLoanAmount = 0;
+            objectsToRender.put("suggested", "bankAccount");
+        } else if (inputBankAccount > 0) {
+            inputLoanAmount -= inputBankAccount;
+            objectsToRender.put("suggested", "both");
+        } else {
+            objectsToRender.put("suggested", "loan");
+        }
+
+        if (inputLoanAmount > 0) {
+            final Bank bank = banks.get(inputBank);
+            Logger.info("Bank: " + bank.name);
+            final Map<Integer, Map<String, Double>> valueMap = bank.valueMap;
+            final Map<Integer, Map<String, Double>> loanMap = new HashMap<Integer, Map<String, Double>>();
+            for (Integer key : valueMap.keySet()) {
+                final Map<String, Double> loanMonthMap = new HashMap<String, Double>(valueMap.get(key));
+                loanMap.put(key, loanMonthMap);
+                final double rate = loanMonthMap.get(Bank.INTEREST_RATE) / 100;
+                final double monthlyPayment =
+                        (inputLoanAmount / ((1 - Math.pow(1 + (rate / 12.0 ), -key)) / (rate /12)))
+                                + loanMonthMap.get(Bank.TRANSACTION_FEE);
+                final double totalPayment = monthlyPayment * (double)key + loanMonthMap.get(Bank.OPENING_FEE);
+                loanMonthMap.put(Bank.MONTHLY_PAYMENT, monthlyPayment);
+                loanMonthMap.put(Bank.TOTAL_AMOUNT, totalPayment);
+            }
+
+            objectsToRender.put("loanMap", loanMap);
         }
 
         final Map<String, Double> bonusCardAmounts = new HashMap<String, Double>();
         for (BonusCard bonusCard : bonusCards) {
-            bonusCardAmounts.put(bonusCard.name, (inputLoanAmount * (bonusCard.bonusPercentage / 100)));
+            bonusCardAmounts.put(bonusCard.name, (originalLoanAmount * (bonusCard.bonusPercentage / 100)));
         }
-
-        Map<String, Object> objectsToRender = new HashMap<String, Object>();
-        objectsToRender.put("loanMap", loanMap);
         objectsToRender.put("bonusCardAmounts", bonusCardAmounts);
+        objectsToRender.put("loanAmount", inputLoanAmount);
 
         renderJSON(objectsToRender);
     }
